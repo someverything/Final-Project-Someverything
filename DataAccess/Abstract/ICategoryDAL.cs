@@ -15,5 +15,6 @@ namespace DataAccess.Abstract
         Task UpdateCategoryAsync(Guid Id, List<UpdateCategoryDTO> models);
         void DeleteCategory(Guid Id);
         GetCategoryDTO GetCategoryByLang(Guid Id, string LangCode);
+        List<GetCategoryDTO> GetAllCategories();
     }
 }
