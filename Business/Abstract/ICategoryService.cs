@@ -7,7 +7,7 @@ namespace Business.Abstract
         void Create(List<AddCategoryDTO> models);
         Task Update(Guid id, List<UpdateCategoryDTO> models);
         void Delete(Guid id);
-        GetCategoryDTO GetByLang(Guid id, string langCode);
-        List<GetCategoryDTO> GetAllByLang(string langCode);
+        GetCategoryDTO GetByLang(Guid id, string langCode = null);
+        List<GetCategoryDTO> GetAllByLang(string langCode = null);
     }
 }

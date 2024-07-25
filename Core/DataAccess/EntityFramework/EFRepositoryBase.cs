@@ -24,10 +24,25 @@ namespace Core.DataAccess.EntityFramework
             context.SaveChanges();
         }
 
-        public TEntity Get(Expression<Func<TEntity, bool>> expression)
+
+        public TEntity Get(Expression<Func<TEntity, bool>> expression, bool tracking = true)
         {
             using var context = new TContext();
             return context.Set<TEntity>().FirstOrDefault(expression);
+        }
+
+        public List<TEntity> GetAll(Expression<Func<TEntity, bool>>? expression = null, bool tracking = true)
+        {
+            using var context = new TContext();
+
+
+            return expression == null
+                ? tracking == true
+                    ? context.Set<TEntity>().ToList()
+                    : context.Set<TEntity>().AsNoTracking().ToList()
+                : tracking == tracking
+                    ? [.. context.Set<TEntity>().Where(expression)]
+                    : context.Set<TEntity>().AsNoTracking().Where(expression).ToList();
         }
 
         public void Update(TEntity entity)
