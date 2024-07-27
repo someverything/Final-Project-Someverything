@@ -23,14 +23,24 @@ namespace DataAccess.Concrete.EntityFramework
             _mapper = mapper;
         }
 
-        public Task<CreateSubCatDTO> CreateAsync(CreateSubCatDTO model)
+        public async Task<CreateSubCatDTO> CreateAsync(CreateSubCatDTO model)
         {
-            throw new NotImplementedException();
+            var subCategory = new SubCategory
+            {
+                Id = Guid.NewGuid(),
+                Name = model.Name,
+                CategoryId = model.CategoryId
+            };
+
+            _context.SubCategories.Add(subCategory);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<CreateSubCatDTO>(model);
         }
 
-        public Task<bool> DeleteAsync(int Id)
+        public async Task DeleteAsync(SubCategory subCategory)
         {
-            throw new NotImplementedException();
+            _context.SubCategories.Remove(subCategory);
+            await (_context.SaveChangesAsync());
         }
 
         public async Task<IEnumerable<SubCategory>> GetAllAsync()
@@ -39,10 +49,9 @@ namespace DataAccess.Concrete.EntityFramework
             return _mapper.Map<IEnumerable<SubCategory>>(subCats);
         }
 
-        public async Task<GetSubCatDTO> GetAsync(int Id)
+        public async Task<SubCategory> GetAsync(Guid Id)
         {
-            var subCat = await _context.SubCategories.FindAsync(Id);
-            return _mapper.Map<GetSubCatDTO>(subCat);
+            return await _context.SubCategories.FindAsync(Id);
         }
 
         public async Task<UpdateSubCatDTO> UpdateAsync(UpdateSubCatDTO model)
@@ -53,5 +62,6 @@ namespace DataAccess.Concrete.EntityFramework
             await _context.SaveChangesAsync();
             return _mapper.Map<UpdateSubCatDTO>(subCat);
         }
+
     }
 }

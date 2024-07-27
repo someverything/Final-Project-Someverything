@@ -12,8 +12,8 @@ namespace DataAccess.Abstract
     public interface ISubCategoryDAL : IRepositoryBase<SubCategory>
     {
         Task<IEnumerable<SubCategory>> GetAllAsync();
-        Task<GetSubCatDTO> GetAsync(int Id);
-        Task<bool> DeleteAsync(int Id);
+        Task<SubCategory> GetAsync(Guid Id);
+        Task DeleteAsync(SubCategory subCategory);
         Task<UpdateSubCatDTO> UpdateAsync(UpdateSubCatDTO model);
         Task<CreateSubCatDTO> CreateAsync(CreateSubCatDTO model);
     }

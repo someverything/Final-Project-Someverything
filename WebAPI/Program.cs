@@ -1,9 +1,11 @@
+using Business.DependencyResolver;
 using Core.DependencyResolver;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCoreService();
+builder.Services.AddBussinessServices();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
