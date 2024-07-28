@@ -1,5 +1,6 @@
 using Business.DependencyResolver;
 using Core.DependencyResolver;
+using WebAPI.Middlewears;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddLogging();
+builder.Services.AddTransient<GlobalHandlingExeptionsMiddlewear>();
+
 var app = builder.Build();
+
+app.UseMiddleware<GlobalHandlingExeptionsMiddlewear>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
