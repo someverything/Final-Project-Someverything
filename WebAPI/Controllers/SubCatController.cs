@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateSubCatDTO model)
+        public IActionResult CreateSubCat([FromBody] CreateSubCatDTO model)
         {
             var result = _subCatService.Create(model);
 
@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteAsync(Guid Id)
+        public async Task<IActionResult> DeleteSubCatAsync(Guid Id)
         {
             var result = await _subCatService.DeleteAsync(Id);
 
@@ -36,11 +36,26 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("{Id}")]
-        public IActionResult Get(Guid Id)
+        public IActionResult GetSubCat(Guid Id)
         {
             var result = _subCatService.Get(Id);
             if (result is IDataResult<GetSubCatDTO> dataResult && dataResult.Success) return Ok(dataResult);
             else return StatusCode((int)((ErrorResult)result).StatusCode, result.Message);
         }
+
+        [HttpPut("{Id}")]
+        public IActionResult UpdateSubCat(Guid Id,[FromBody] UpdateSubCatDTO model)
+        {
+            _subCatService.Update(Id, model);
+            return Ok();
+        }
+        [HttpGet]
+        public IActionResult GetAllSubCats()
+        {
+            var result = _subCatService.GetAll();
+            if (result.Success) return Ok(result);
+            return BadRequest(result.Message);
+        }
+
     }
 }

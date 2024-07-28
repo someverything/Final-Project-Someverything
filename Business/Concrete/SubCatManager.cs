@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Abstract;
 using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete;
 using Core.Utilities.Results.Concrete.ErrorResults;
 using Core.Utilities.Results.Concrete.SuccessResults;
 using DataAccess.Abstract;
@@ -55,9 +56,11 @@ namespace Business.Concrete
             throw new NotImplementedException();
         }
 
-        public IDataResult<List<GetSubCatDTO>> GetAll(Guid Id)
+        public IDataResult<List<GetSubCatDTO>> GetAll()
         {
-            throw new NotImplementedException();
+            var subCats = _subCategoryDAL.GetAll();
+            var result = _mapper.Map<List<GetSubCatDTO>>(subCats);
+            return new DataResult<List<GetSubCatDTO>>(result, true, System.Net.HttpStatusCode.OK);
         }
 
         public IResult Update(Guid Id, UpdateSubCatDTO model)

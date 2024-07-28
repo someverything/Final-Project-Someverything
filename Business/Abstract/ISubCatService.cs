@@ -14,6 +14,6 @@ namespace Business.Abstract
         IResult Update(Guid Id,UpdateSubCatDTO model);
         Task<IResult> DeleteAsync(Guid Id);
         IResult Get(Guid Id);
-        IDataResult<List<GetSubCatDTO>> GetAll(Guid Id);
+        IDataResult<List<GetSubCatDTO>> GetAll();
     }
 }
