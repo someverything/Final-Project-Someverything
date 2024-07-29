@@ -11,9 +11,9 @@ namespace Business.Abstract
     public interface ISubCatService
     {
         IResult Create(CreateSubCatDTO model);
-        IResult Update(Guid Id,UpdateSubCatDTO model);
+        Task<IResult> Update(UpdateSubCatDTO model);
         Task<IResult> DeleteAsync(Guid Id);
-        IResult Get(Guid Id);
+        Task<IResult> GetAsync(Guid Id);
         IDataResult<List<GetSubCatDTO>> GetAll();
     }
 }

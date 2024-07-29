@@ -51,7 +51,8 @@ namespace DataAccess.Concrete.EntityFramework
 
         public async Task<SubCategory> GetAsync(Guid Id)
         {
-            return await _context.SubCategories.FindAsync(Id);
+            var subCat = await _context.SubCategories.FirstOrDefaultAsync(x => x.Id == Id);
+            return subCat;
         }
 
         public async Task<UpdateSubCatDTO> UpdateAsync(UpdateSubCatDTO model)

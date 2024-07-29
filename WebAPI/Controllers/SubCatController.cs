@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
             _subCatService = subCatService;
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public IActionResult CreateSubCat([FromBody] CreateSubCatDTO model)
         {
             var result = _subCatService.Create(model);
@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
             else return StatusCode((int)result.StatusCode, result.Message);
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> DeleteSubCatAsync(Guid Id)
         {
             var result = await _subCatService.DeleteAsync(Id);
@@ -35,27 +35,32 @@ namespace WebAPI.Controllers
             else return StatusCode((int)result.StatusCode, result.Message);
         }
 
-        [HttpGet("{Id}")]
-        public IActionResult GetSubCat(Guid Id)
+        [HttpGet("Get/{Id}")]
+        public async Task<IActionResult> GetSubCat(Guid Id)
         {
-            var result = _subCatService.Get(Id);
-            if (result is IDataResult<GetSubCatDTO> dataResult && dataResult.Success) return Ok(dataResult);
-            else return StatusCode((int)((ErrorResult)result).StatusCode, result.Message);
+            var result = await _subCatService.GetAsync(Id);
+            if (!result.Success)
+                return StatusCode((int)result.StatusCode, result.Message);
+            return Ok(result);
         }
 
-        [HttpPut("{Id}")]
-        public IActionResult UpdateSubCat(Guid Id,[FromBody] UpdateSubCatDTO model)
-        {
-            _subCatService.Update(Id, model);
-            return Ok();
-        }
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IActionResult GetAllSubCats()
         {
             var result = _subCatService.GetAll();
             if (result.Success) return Ok(result);
             return BadRequest(result.Message);
         }
+
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateSubCatAsync([FromBody] UpdateSubCatDTO model)
+        {
+            var result = await _subCatService.Update(model);
+            if (!result.Success)
+                return StatusCode((int)result.StatusCode, result.Message);
+            return Ok(result);
+        }
+
 
     }
 }

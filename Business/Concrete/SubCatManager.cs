@@ -51,10 +51,6 @@ namespace Business.Concrete
             return new SuccessResult("SubCategory deleted successfully!", true, System.Net.HttpStatusCode.OK);
         }
 
-        public IResult Get(Guid Id)
-        {
-            throw new NotImplementedException();
-        }
 
         public IDataResult<List<GetSubCatDTO>> GetAll()
         {
@@ -63,9 +59,29 @@ namespace Business.Concrete
             return new DataResult<List<GetSubCatDTO>>(result, true, System.Net.HttpStatusCode.OK);
         }
 
-        public IResult Update(Guid Id, UpdateSubCatDTO model)
+        public async Task<IResult> GetAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            var subCat = await _subCategoryDAL.GetAsync(Id);
+            if (subCat == null)
+                return new ErrorDataResults<GetSubCatDTO>("SubCategory not found", System.Net.HttpStatusCode.NotFound);
+
+            var result = new GetSubCatDTO
+            {
+                Name = subCat.Name,
+                CategoryId = subCat.CategoryId,
+                CreatedDate = subCat.CreatedDate,
+                UpdatedDate = subCat.UpdatedDate
+            };
+
+            return new SuccessDataResult<GetSubCatDTO>(result, "SubCategory retrieved successfully", System.Net.HttpStatusCode.OK);
+        }
+
+        public async Task<IResult> Update(UpdateSubCatDTO model)
+        {
+            var updatedSubCat = await _subCategoryDAL.UpdateAsync(model);
+            if (updatedSubCat is null)
+                return new ErrorDataResults<UpdateSubCatDTO>("SubCategory not found", System.Net.HttpStatusCode.NotFound);
+            return new SuccessDataResult<UpdateSubCatDTO>(updatedSubCat, "SubCategory successfully updated", System.Net.HttpStatusCode.OK);
         }
     }
 }
