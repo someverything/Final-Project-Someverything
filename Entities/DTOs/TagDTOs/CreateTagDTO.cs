@@ -8,6 +8,7 @@ namespace Entities.DTOs.TagDTOs
 {
     public class CreateTagDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }
