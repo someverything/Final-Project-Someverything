@@ -43,6 +43,12 @@ namespace DataAccess.Concrete.EntityFramework
             return _mapper.Map<IQueryable<Tag>>(tags);
         }
 
+        public async Task<Tag> GetTagAsync(Guid Id)
+        {
+            var tag = await _context.Tags.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+            return _mapper.Map<Tag>(tag);
+        }
+
         public async Task UpdateTagAsync(UpdateTagDTO model)
         {
             var tag = await _context.Tags.FindAsync(model.Id);

@@ -47,9 +47,9 @@ namespace Business.Concrete
             }
         }
 
-        public Task<IResult> DeleteAsync(Guid Id)
+        public async Task<IResult> DeleteAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            var tag = await _tagDAL.GetAsync(Id);
         }
 
         public IDataResult<IQueryable<GetSubCatDTO>> GetAll()
