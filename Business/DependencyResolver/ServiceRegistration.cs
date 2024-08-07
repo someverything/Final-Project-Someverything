@@ -19,11 +19,13 @@ namespace Business.DependencyResolver
 
             services.AddScoped<ICategoryService, CategoryManager>();
             services.AddScoped<ICategoryDAL, EFCategoryDAL>();
-
             services.AddScoped<ICategoryLangDAL, EFCategoryLangDAL>();
 
             services.AddScoped<ISubCatService, SubCatManager>();
             services.AddScoped<ISubCategoryDAL, EFSubCatDAL>();
+            
+            services.AddScoped<ITagService, TagManager>();
+            services.AddScoped<ITagDAL, EFTagDAL>();
         }
     }
 }
