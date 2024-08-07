@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Concrete;
 using Entities.DTOs.SubCategoryDTOs;
+using Entities.DTOs.TagDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace Business.Mapping
             CreateMap<SubCategory, GetSubCatDTO>();
             CreateMap<SubCategory, CreateSubCatDTO>();
             CreateMap<SubCategory, UpdateSubCatDTO>();
+            CreateMap<Tag, CreateTagDTO>();
+            CreateMap<Tag, UpdateTagDTO>();
+            CreateMap<Tag, GetTagDTO>();
+            CreateMap<UpdateTagDTO, Tag>();
         }
     }
 }

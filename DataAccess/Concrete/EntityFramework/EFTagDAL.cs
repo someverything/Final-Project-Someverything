@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Core.DataAccess.EntityFramework;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -30,11 +31,15 @@ namespace DataAccess.Concrete.EntityFramework
             _context.SaveChanges();
         }
 
-        public void DeleteTag(Guid Id)
+        public async Task DeleteTag(Guid Id)
         {
-            Tag tag = _context.Tags.AsNoTracking().FirstOrDefault(x => x.Id == Id);
-            if (tag != null) _context.Tags.Remove(tag);
-            _context.SaveChanges();
+            var tag = await _context.Tags.FindAsync(Id);
+
+            if (tag != null)
+            {
+                _context.Tags.Remove(tag);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public IQueryable<Tag> GetAll()
@@ -49,14 +54,8 @@ namespace DataAccess.Concrete.EntityFramework
             return _mapper.Map<Tag>(tag);
         }
 
-        public async Task UpdateTagAsync(UpdateTagDTO model)
+        public async Task UpdateTagAsync(Tag tag)
         {
-            var tag = await _context.Tags.FindAsync(model.Id);
-            if (tag == null)
-            {
-                throw new KeyNotFoundException("Tag not found");
-            }
-            _mapper.Map(model, tag);
             _context.Tags.Update(tag);
             await _context.SaveChangesAsync();
         }

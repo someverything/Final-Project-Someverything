@@ -13,8 +13,8 @@ namespace DataAccess.Abstract
     {
         IQueryable<Tag> GetAll();
         void CreateTag(CreateTagDTO model);
-        Task UpdateTagAsync(UpdateTagDTO model);
-        void DeleteTag(Guid Id);
+        Task UpdateTagAsync(Tag tag);
+        Task DeleteTag(Guid Id);
         Task<Tag> GetTagAsync(Guid Id);
     }
 }

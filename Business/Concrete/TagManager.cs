@@ -4,6 +4,7 @@ using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete.ErrorResults;
 using Core.Utilities.Results.Concrete.SuccessResults;
 using DataAccess.Abstract;
+using Entities.Concrete;
 using Entities.DTOs.SubCategoryDTOs;
 using Entities.DTOs.TagDTOs;
 using Microsoft.Extensions.Logging;
@@ -49,22 +50,72 @@ namespace Business.Concrete
 
         public async Task<IResult> DeleteAsync(Guid Id)
         {
-            var tag = await _tagDAL.GetAsync(Id);
+            var tag = await _tagDAL.GetTagAsync(Id);
+            if (tag == null)
+            {
+                _logger.LogError("Tag with Id {Id} not found", Id);
+                return new ErrorResult("Tah not found!", false, System.Net.HttpStatusCode.NotFound);
+            }
+
+            await _tagDAL.DeleteTag(tag.Id);
+            _logger.LogInformation("Tag with Id { Id} deleted successfully.",Id);
+            return new SuccessResult("Successfully deleted!", true, System.Net.HttpStatusCode.OK);
+
         }
 
-        public IDataResult<IQueryable<GetSubCatDTO>> GetAll()
+        public IDataResult<IQueryable<GetTagDTO>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tags = _tagDAL.GetAll();
+                var tagDTOs = tags.Select(tag => _mapper.Map<GetTagDTO>(tag));
+
+                return new SuccessDataResult<IQueryable<GetTagDTO>>(tagDTOs.AsQueryable(), System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                return new ErrorDataResults<IQueryable<GetTagDTO>>("An error occurred while retrieving tags.", System.Net.HttpStatusCode.NotFound);
+            }
         }
 
-        public Task<IResult> GetAsync(Guid Id)
+        public async Task<IResult> GetAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tag = await _tagDAL.GetTagAsync(Id);
+                if(tag == null)
+                {
+                    _logger.LogError("Tag not found!", Id);
+                    return new ErrorDataResults<GetTagDTO>("Tag not found!", System.Net.HttpStatusCode.NotFound);
+                } 
+                    
+                var tagDTO = _mapper.Map<GetTagDTO>(tag);
+                return new SuccessDataResult<GetTagDTO>(tagDTO, System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("An error occurred while retrieving the tag.", Id);
+                return new ErrorDataResults<GetTagDTO>("An error occurred while retrieving the tag.", System.Net.HttpStatusCode.BadRequest);
+            }
         }
 
-        public Task<IResult> Update(UpdateTagDTO model)
+        public async Task<IResult> Update(UpdateTagDTO model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tag = await _tagDAL.GetTagAsync(model.Id);
+                if (tag is null)
+                {
+                    return new ErrorDataResults<GetTagDTO>("Tag not found!", System.Net.HttpStatusCode.NotFound);
+                }
+                _mapper.Map(model, tag);
+                await _tagDAL.UpdateTagAsync(tag);
+                return new SuccessDataResult<GetTagDTO>("Tag updated successfully!", System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                return new ErrorResult("An error occurred while updating the tag.", false, System.Net.HttpStatusCode.BadRequest);
+            }
         }
     }
 }

@@ -12,9 +12,7 @@ namespace DataAccess.Mapper
             CreateMap<SubCategory, GetSubCatDTO>();
             CreateMap<SubCategory, CreateSubCatDTO>();
             CreateMap<SubCategory, UpdateSubCatDTO>();
-            CreateMap<Tag, CreateTagDTO>();
-            CreateMap<Tag, UpdateTagDTO>();
-            CreateMap<Tag, GetTagDTO>();
+
         }
     }
 }
