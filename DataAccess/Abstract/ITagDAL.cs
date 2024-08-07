@@ -1,4 +1,5 @@
 ﻿using Core.DataAccess.EntityFramework;
+using Core.Utilities.Results.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.TagDTOs;
 using System;
@@ -12,7 +13,7 @@ namespace DataAccess.Abstract
     public interface ITagDAL : IRepositoryBase<Tag>
     {
         IQueryable<Tag> GetAll();
-        void CreateTag(CreateTagDTO model);
+        Task<IDataResult<CreateTagDTO>> CreateTag(CreateTagDTO model);
         Task UpdateTagAsync(Tag tag);
         Task DeleteTag(Guid Id);
         Task<Tag> GetTagAsync(Guid Id);

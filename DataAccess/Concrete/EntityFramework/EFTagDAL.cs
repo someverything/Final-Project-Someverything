@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Azure;
 using Core.DataAccess.EntityFramework;
+using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete.ErrorResults;
+using Core.Utilities.Results.Concrete.SuccessResults;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.TagDTOs;
@@ -24,11 +27,20 @@ namespace DataAccess.Concrete.EntityFramework
             _mapper = mapper;
         }
 
-        public void CreateTag(CreateTagDTO model)
+        public async Task<IDataResult<CreateTagDTO>> CreateTag(CreateTagDTO model)
         {
-            Tag tag = new Tag();
-            _context.Tags.Add(tag);
-            _context.SaveChanges();
+            try
+            {
+                Tag tag = _mapper.Map<Tag>(model);
+                await _context.Tags.AddAsync(tag);
+                await _context.SaveChangesAsync();
+                return new SuccessDataResult<CreateTagDTO>(model, "Tag created successfully.", System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+
+                return new ErrorDataResults<CreateTagDTO>("An error occurred while creating the tag.", System.Net.HttpStatusCode.BadRequest);
+            }
         }
 
         public async Task DeleteTag(Guid Id)

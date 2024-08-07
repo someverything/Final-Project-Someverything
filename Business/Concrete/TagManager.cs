@@ -35,7 +35,6 @@ namespace Business.Concrete
             {
                 _tagDAL.Add(new()
                 {
-                    Id = model.Id,
                     Name = model.Name
                 });
                 _logger.LogInformation("Tag successfyully added.");
