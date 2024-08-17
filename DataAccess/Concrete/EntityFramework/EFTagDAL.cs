@@ -7,9 +7,9 @@ using Core.Utilities.Results.Concrete.SuccessResults;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.TagDTOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +62,7 @@ namespace DataAccess.Concrete.EntityFramework
 
         public async Task<Tag> GetTagAsync(Guid Id)
         {
-            var tag = await _context.Tags.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+            var tag = await _context.Tags.FirstOrDefaultAsync(x => x.Id == Id);
             return _mapper.Map<Tag>(tag);
         }
 
