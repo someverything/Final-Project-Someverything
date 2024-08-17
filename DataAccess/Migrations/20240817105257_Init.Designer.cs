@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240716173259_Init")]
+    [Migration("20240817105257_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -92,6 +92,36 @@ namespace DataAccess.Migrations
                     b.HasIndex("ArticleId");
 
                     b.ToTable("ArticleLangs");
+                });
+
+            modelBuilder.Entity("Entities.Concrete.ArticlePicture", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.ToTable("ArticlePicture");
                 });
 
             modelBuilder.Entity("Entities.Concrete.ArticleTag", b =>
@@ -229,6 +259,17 @@ namespace DataAccess.Migrations
                         .HasForeignKey("ArticleId");
                 });
 
+            modelBuilder.Entity("Entities.Concrete.ArticlePicture", b =>
+                {
+                    b.HasOne("Entities.Concrete.Article", "Article")
+                        .WithMany("ArticlePictures")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+                });
+
             modelBuilder.Entity("Entities.Concrete.ArticleTag", b =>
                 {
                     b.HasOne("Entities.Concrete.Article", "Article")
@@ -273,6 +314,8 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Entities.Concrete.Article", b =>
                 {
                     b.Navigation("ArticleLangs");
+
+                    b.Navigation("ArticlePictures");
 
                     b.Navigation("ArticleTags");
                 });

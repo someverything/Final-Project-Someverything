@@ -127,6 +127,28 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ArticlePicture",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ArticleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticlePicture", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArticlePicture_Articles_ArticleId",
+                        column: x => x.ArticleId,
+                        principalTable: "Articles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ArticleTags",
                 columns: table => new
                 {
@@ -156,6 +178,11 @@ namespace DataAccess.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ArticleLangs_ArticleId",
                 table: "ArticleLangs",
+                column: "ArticleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticlePicture_ArticleId",
+                table: "ArticlePicture",
                 column: "ArticleId");
 
             migrationBuilder.CreateIndex(
@@ -189,6 +216,9 @@ namespace DataAccess.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ArticleLangs");
+
+            migrationBuilder.DropTable(
+                name: "ArticlePicture");
 
             migrationBuilder.DropTable(
                 name: "ArticleTags");
