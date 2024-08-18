@@ -15,6 +15,7 @@ namespace Business.Abstract
         Task<IDataResult<Token>> LoginAsync(LoginDTO loginDTO);
         Task<IDataResult<string>> UpdateRefreshTokenAsync(string refreshToken, AppUser appUser);
         Task<IDataResult<Token>> RefreshTokenLoginAsync(string refreshToken);
+        Task<IResult> Logout(string userId);
         Task<IResult> AssignRoleToUserAsync(string userId, string roleName);
         Task<IResult> UserEmailConfirmed(string email, string otp);
     }

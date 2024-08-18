@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 namespace Business.Concrete
@@ -69,9 +70,44 @@ namespace Business.Concrete
 
         }
 
-        public Task<IDataResult<Token>> RefreshTokenLoginAsync(string refreshToken)
+        public async Task<IResult> Logout(string userId)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(userId);
+            if(user is not null)
+            {
+                user.RefreshToken = null;
+                user.RefreshTokenExpiredDate = null;
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded) return new SuccessResult(statusCode: System.Net.HttpStatusCode.OK);
+                
+                else
+                {
+                    string response = string.Empty;
+                    foreach (var error in result.Errors)
+                    {
+                        response += error.Description + ". ";
+                    }
+                    _logger.LogError(response);
+                    return new ErrorResult(response, false, HttpStatusCode.BadRequest);
+                }
+            }
+            //todo correcting
+            _logger.LogError(null);
+            return null;
+        }
+
+        public async Task<IDataResult<Token>> RefreshTokenLoginAsync(string refreshToken)
+        {
+            var user = _userManager.Users.FirstOrDefault(x => x.RefreshToken == refreshToken);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            if(user != null && user.RefreshTokenExpiredDate > DateTime.Now)
+            {
+                Token token = await _tokenService.CreateAccessTokenAsync(user, userRoles.ToList());
+                token.RefreshToken = refreshToken;
+                return new SuccessDataResult<Token>(data: token, statusCode: System.Net.HttpStatusCode.OK);
+            }
+            else return new ErrorDataResults<Token>(statusCode: System.Net.HttpStatusCode.BadRequest, message: "Relogin");
         }
 
         public Task<IResult> RegisterAsync(RegisterDTO model)
