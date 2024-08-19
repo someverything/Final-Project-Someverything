@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.Messages;
 using Core.Entities.Concrete;
 using Core.Utilities.Messages.Abstract;
 using Core.Utilities.Results.Abstract;
@@ -92,9 +93,8 @@ namespace Business.Concrete
                     return new ErrorResult(response, false, HttpStatusCode.BadRequest);
                 }
             }
-            //todo correcting
-            _logger.LogError(null);
-            return null;
+            _logger.LogError(AuthMessages.UserNotFound);
+            return new ErrorResult(message: AuthMessages.UserNotFound, false, System.Net.HttpStatusCode.NotFound);
         }
 
         public async Task<IDataResult<Token>> RefreshTokenLoginAsync(string refreshToken)

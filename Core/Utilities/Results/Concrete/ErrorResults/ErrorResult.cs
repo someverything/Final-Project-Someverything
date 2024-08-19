@@ -9,6 +9,9 @@ namespace Core.Utilities.Results.Concrete.ErrorResults
 {
     public class ErrorResult : Result
     {
+        private string message;
+        private HttpStatusCode notFound;
+
         public ErrorResult(string message, bool success, HttpStatusCode statusCode) : base(message, success, statusCode)
         {
         }
