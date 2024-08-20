@@ -23,7 +23,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<ArticleTag> ArticleTags { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public int MyProperty { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
