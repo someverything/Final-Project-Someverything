@@ -11,6 +11,7 @@ namespace Core.Utilities.Results.Concrete.ErrorResults
     {
         private string message;
         private HttpStatusCode notFound;
+        private HttpStatusCode badRequest;
 
         public ErrorResult(string message, bool success, HttpStatusCode statusCode) : base(message, success, statusCode)
         {

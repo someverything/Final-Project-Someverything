@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Messages;
+using Business.Validations.FluentValidation;
 using Core.Entities.Concrete;
 using Core.Utilities.Messages.Abstract;
 using Core.Utilities.Results.Abstract;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -112,6 +114,16 @@ namespace Business.Concrete
 
         public Task<IResult> RegisterAsync(RegisterDTO model)
         {
+            //var validator = new RegisterValidation();
+            //var validatorResult = validator.Validate(model);
+            //if (!validatorResult.IsValid)
+            //{
+            //    _logger.LogError(validatorResult.ToString());
+            //    return Task.FromResult<IResult>(new ErrorResult(
+            //        message: validatorResult.ToString(),
+            //        success: false,
+            //        statusCode: HttpStatusCode.BadRequest));
+            //}
             throw new NotImplementedException();
         }
 
