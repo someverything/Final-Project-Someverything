@@ -7,6 +7,7 @@ using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete.ErrorResults;
 using Core.Utilities.Results.Concrete.SuccessResults;
 using Core.Utilities.Security.Abstract;
+using Entities.Common;
 using Entities.DTOs.AuthDTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -112,19 +113,34 @@ namespace Business.Concrete
             else return new ErrorDataResults<Token>(statusCode: System.Net.HttpStatusCode.BadRequest, message: "Relogin");
         }
 
-        public Task<IResult> RegisterAsync(RegisterDTO model)
+        public async Task<IResult> RegisterAsync(RegisterDTO model)
         {
-            //var validator = new RegisterValidation();
-            //var validatorResult = validator.Validate(model);
-            //if (!validatorResult.IsValid)
-            //{
-            //    _logger.LogError(validatorResult.ToString());
-            //    return Task.FromResult<IResult>(new ErrorResult(
-            //        message: validatorResult.ToString(),
-            //        success: false,
-            //        statusCode: HttpStatusCode.BadRequest));
-            //}
-            throw new NotImplementedException();
+            var validator = new RegisterValidation();
+            var validatorResult = validator.Validate(model);
+            if (!validatorResult.IsValid)
+            {
+                _logger.LogError(validatorResult.ToString());
+                return new ErrorResult(message: validatorResult.ToString(), success: false, statusCode: HttpStatusCode.BadRequest);
+            }
+            User newUser = new()
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                UserName = model.Username
+            };
+            var result = await _userManager.CreateAsync(newUser, model.Password);
+            if (result.Succeeded) return new SuccessResult(System.Net.HttpStatusCode.OK);
+            else
+            {
+                string response = string.Empty;
+                foreach (var error in result.Errors)
+                {
+                    response += error.Description + ". ";
+                }
+                return new ErrorResult(response, false, System.Net.HttpStatusCode.BadRequest);
+            }
+
         }
 
         public Task<IDataResult<string>> UpdateRefreshTokenAsync(string refreshToken, AppUser appUser)
