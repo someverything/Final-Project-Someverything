@@ -138,14 +138,36 @@ namespace Business.Concrete
                 {
                     response += error.Description + ". ";
                 }
+                _logger.LogError(response);
                 return new ErrorResult(response, false, System.Net.HttpStatusCode.BadRequest);
             }
 
         }
 
-        public Task<IDataResult<string>> UpdateRefreshTokenAsync(string refreshToken, AppUser appUser)
+        public async Task<IDataResult<string>> UpdateRefreshTokenAsync(string refreshToken, AppUser appUser)
         {
-            throw new NotImplementedException();
+            if(appUser is not null)
+            {
+                appUser.RefreshToken = refreshToken;
+                appUser.RefreshTokenExpiredDate = DateTime.UtcNow.AddMonths(1);
+                var res = await _userManager.UpdateAsync(appUser);
+                if (res.Succeeded) return new SuccessDataResult<string>(data: refreshToken ,System.Net.HttpStatusCode.OK);
+                else
+                {
+                    string response = string.Empty;
+                    foreach (var error in res.Errors)
+                    {
+                        response += error.Description + ". ";
+                    }
+                    _logger.LogError(response);
+                    return new ErrorDataResults<string>(message: response, HttpStatusCode.BadRequest);
+                }
+            }
+            else
+            {
+                _logger.LogError(HttpStatusCode.NotFound.ToString());
+                return new ErrorDataResults<string>(HttpStatusCode.NotFound);
+            }
         }
 
         public Task<IResult> UserEmailConfirmed(string email, string otp)
