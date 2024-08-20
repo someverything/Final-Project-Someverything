@@ -43,6 +43,15 @@ namespace Business.Concrete
             return new SuccessResult(System.Net.HttpStatusCode.OK);
         }
 
+        public string GenerateOtp()
+        {
+            byte[] data = new byte[4];
+            using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+            rng.GetBytes(data);
+            int value = BitConverter.ToInt32(data, 0);
+            return Math.Abs(value % 900000).ToString("D6");
+        }
+
         public async Task<IDataResult<Token>> LoginAsync(LoginDTO loginDTO)
         {
             var findUser = await _userManager.FindByEmailAsync(loginDTO.UsernameOrEmail);
@@ -170,9 +179,16 @@ namespace Business.Concrete
             }
         }
 
-        public Task<IResult> UserEmailConfirmed(string email, string otp)
+        public async Task<IResult> UserEmailConfirmed(string email, string otp)
         {
-            throw new NotImplementedException();
+            var findUser = _userManager.Users.OfType<User>().FirstOrDefault(x => x.Email == email);
+            if(findUser.OTP == otp && findUser.ExpiredDate > DateTime.Now)
+            {
+                findUser.EmailConfirmed = true;
+                await _userManager.UpdateAsync(findUser);
+                return new SuccessResult(HttpStatusCode.OK);
+            }
+            return new ErrorResult(HttpStatusCode.BadRequest);
         }
     }
 }

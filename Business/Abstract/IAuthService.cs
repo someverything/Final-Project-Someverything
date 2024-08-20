@@ -18,5 +18,6 @@ namespace Business.Abstract
         Task<IResult> Logout(string userId);
         Task<IResult> AssignRoleToUserAsync(string userId, string roleName);
         Task<IResult> UserEmailConfirmed(string email, string otp);
+        public string GenerateOtp();
     }
 }
