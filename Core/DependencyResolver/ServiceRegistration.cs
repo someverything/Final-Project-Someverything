@@ -2,6 +2,8 @@
 using Core.Concrete;
 using Core.Utilities.Messages.Abstract;
 using Core.Utilities.Messages.Concrete;
+using Core.Utilities.Security.Abstract;
+using Core.Utilities.Security.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ namespace Core.DependencyResolver
         {
             services.AddScoped<ILangService, LanguageManager>();
             services.AddScoped<IMessageService, MessageServices>();
+            services.AddScoped<ITokenService, TokenManager>();
         }
     }
 }

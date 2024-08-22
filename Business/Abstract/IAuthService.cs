@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
-    interface IAuthService
+    public interface IAuthService
     {
         Task<IResult> RegisterAsync(RegisterDTO model);
         Task<IDataResult<Token>> LoginAsync(LoginDTO loginDTO);

@@ -51,7 +51,8 @@ namespace Business.Validations.FluentValidation
 
         private string GetTranslation(string key)
         {
-            return ValidatorOptions.Global.LanguageManager.GetString(key, new CultureInfo(Thread.CurrentThread.CurrentUICulture.Name));
+            string translation = ValidatorOptions.Global.LanguageManager.GetString(key, new CultureInfo(Thread.CurrentThread.CurrentUICulture.Name));
+            return string.IsNullOrEmpty(translation) ? "Ann error occurred" : translation;
         }
     }
 }

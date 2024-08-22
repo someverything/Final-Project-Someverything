@@ -8,6 +8,6 @@ namespace Core.Utilities.Messages.Abstract
 {
     public interface IMessageService
     {
-        Task SendMessage(string to, string subject,  string message);
+        Task SendMessage(string to, string subject, string message);
     }
 }

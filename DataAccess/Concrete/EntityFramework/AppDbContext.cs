@@ -1,4 +1,5 @@
-﻿using Entities.Common;
+﻿using Core.Entities.Concrete;
+using Entities.Common;
 using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,6 +25,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AppUser> appUsers { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
