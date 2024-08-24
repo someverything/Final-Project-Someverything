@@ -54,6 +54,13 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("assign/{userId}")]
+        public async Task<IActionResult> AssignRoleToUserAsync([FromRoute] string userId, [FromBody] string role)
+        {
+            var result = await _authService.AssignRoleToUserAsync(userId, role);
+            if (result.Success) return Ok();
+            return BadRequest(result);
+        }
 
     }
 }
