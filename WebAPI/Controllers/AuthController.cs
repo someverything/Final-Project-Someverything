@@ -1,8 +1,10 @@
 ﻿using Business.Abstract;
 using Business.Messages;
 using Entities.DTOs.AuthDTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -42,5 +44,16 @@ namespace WebAPI.Controllers
             if (result.Success) return Ok();
             return BadRequest(result);
         }
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var result = await _authService.Logout(userId);
+            if (result.Success) return Ok();
+            return BadRequest(result);
+        }
+
+
     }
 }
