@@ -4,6 +4,7 @@ using DataAccess.Concrete.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240827131400_ArtLast")]
+    partial class ArtLast
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,36 +93,6 @@ namespace DataAccess.Migrations
                     b.HasDiscriminator().HasValue("AppUser");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Entities.Concrete.ArtSubCat", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("SubCatId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("SubCategoryId");
-
-                    b.ToTable("ArtSubCats");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Article", b =>
@@ -363,25 +336,6 @@ namespace DataAccess.Migrations
                     b.HasDiscriminator().HasValue("User");
                 });
 
-            modelBuilder.Entity("Entities.Concrete.ArtSubCat", b =>
-                {
-                    b.HasOne("Entities.Concrete.Article", "Article")
-                        .WithMany("ArtSubCats")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Concrete.SubCategory", "SubCategory")
-                        .WithMany("ArtSubCats")
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Article");
-
-                    b.Navigation("SubCategory");
-                });
-
             modelBuilder.Entity("Entities.Concrete.Article", b =>
                 {
                     b.HasOne("Entities.Concrete.CategoryLang", null)
@@ -450,8 +404,6 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Entities.Concrete.Article", b =>
                 {
-                    b.Navigation("ArtSubCats");
-
                     b.Navigation("ArticleLangs");
 
                     b.Navigation("ArticlePhotos");
@@ -469,11 +421,6 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Entities.Concrete.CategoryLang", b =>
                 {
                     b.Navigation("Articles");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.SubCategory", b =>
-                {
-                    b.Navigation("ArtSubCats");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Tag", b =>

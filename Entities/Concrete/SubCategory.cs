@@ -12,5 +12,6 @@ namespace Entities.Concrete
         public string Name { get; set; }
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
+        public ICollection<ArtSubCat> ArtSubCats { get; set; }
     }
 }

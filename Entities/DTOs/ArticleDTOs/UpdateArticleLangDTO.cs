@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Entities.DTOs.ArticleDTOs
 {
-    public class ArticleDTO
+    public class UpdateArticleLangDTO
     {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string LangCode { get; set; }
     }
 }

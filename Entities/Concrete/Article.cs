@@ -12,10 +12,11 @@ namespace Entities.Concrete
         public ICollection<ArticleLang> ArticleLangs { get; set; }
         public bool IsActive { get; set; }
         public long Views { get; set; }
+        public ICollection<ArtSubCat> ArtSubCats { get; set; }
         public ICollection<ArticleTag> ArticleTags { get; set; }
         public string CreatedBy { get; set; }
         public string? UpdatedBy { get; set; }
-        public ICollection<ArticlePicture> ArticlePictures { get; set; }
+        public ICollection<ArticlePhoto> ArticlePhotos { get; set; }
 
     }
 }

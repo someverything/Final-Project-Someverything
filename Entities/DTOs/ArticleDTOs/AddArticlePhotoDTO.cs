@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.Common
+namespace Entities.DTOs.ArticleDTOs
 {
-    public class Upload
+    public class AddArticlePhotoDTO
     {
-        public string FileName { get; set; }
+        public string Name { get; set; }
         public string Path { get; set; }
     }
 }
