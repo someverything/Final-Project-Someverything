@@ -168,9 +168,103 @@ namespace DataAccess.Concrete.EntityFramework
             return article;
         }
 
-        public Task UpdateArticleAsync(Guid Id, UpdateArticleDTO model)
+        public async Task UpdateArticleAsync(Guid Id, UpdateArticleDTO model)
         {
-            throw new NotImplementedException();
+            await using var context = new AppDbContext();
+            var article = await context.Articles
+                .Include(a => a.ArticleLangs)
+                .Include(a => a.ArtSubCats)
+                .Include(a => a.ArticleTags)
+                .Include(a => a.ArticlePhotos)
+                .FirstOrDefaultAsync(a => a.Id == Id);
+
+            if (article == null) throw new Exception("Article not found!");
+
+            article.IsActive = model.IsActive;
+
+            foreach (var langDTO in model.UpdateArticleLangDTOs)
+            {
+                var existingLang = article.ArticleLangs
+                    .FirstOrDefault(al => al.LangCode == langDTO.LangCode);
+
+                if(existingLang is not null)
+                {
+                    existingLang.Title = langDTO.Name;
+                    existingLang.Description = langDTO.Description;
+                }
+                else
+                {
+                    article.ArticleLangs.Add(new ArticleLang
+                    {
+                        ArticleId = Id,
+                        LangCode = langDTO.LangCode,
+                        Title = langDTO.Name,
+                        Description = langDTO.Description
+                    });
+                }
+            }
+
+            foreach (var photoDTO in model.UpdateArticlePhotoDTOs)
+            {
+                var existingPhoto = article.ArticlePhotos
+                    .FirstOrDefault(ap => ap.FileName == photoDTO.Name);
+                
+                if (existingPhoto is not null) existingPhoto.Path = photoDTO.Path;
+                else
+                {
+                    article.ArticlePhotos.Add(new ArticlePhoto
+                    {
+                        ArticleId = article.Id,
+                        FileName = photoDTO.Name,
+                        Path = photoDTO.Path
+                    });
+                }
+            }
+
+            var currentSubCatIds = article.ArtSubCats.Select(asc => asc.SubCatId).ToList();
+            var newSubCats = model.SubCatId.Except(currentSubCatIds);
+            var removedSubCats = currentSubCatIds.Except(model.SubCatId);
+
+            foreach (var newSubCatId in newSubCats)
+            {
+                article.ArtSubCats.Add(new ArtSubCat
+                {
+                    SubCatId = newSubCatId,
+                    ArticleId = article.Id,
+                });
+            }
+
+            var subCatsToRemove = article.ArtSubCats
+                .Where(asc => removedSubCats.Contains(asc.SubCatId))
+                .ToList();
+
+            foreach (var subCat in subCatsToRemove)
+            {
+                context.ArtSubCats.Remove(subCat);
+            }
+
+            var currentTagIds = article.ArticleTags.Select(at => at.TagId).ToList();
+            var newTags = model.TagId.Except(currentTagIds);
+            var removedTags = currentTagIds.Except(model.TagId);
+
+            foreach (var newTagId in newTags)
+            {
+                article.ArticleTags.Add(new ArticleTag
+                {
+                    ArticleId = article.Id,
+                    TagId = newTagId,
+                });
+            }
+
+            var tagsToRemove = article.ArticleTags
+                .Where(at => removedTags.Contains(at.TagId))
+                .ToList();
+            foreach (var tag in tagsToRemove)
+            {
+                context.ArticleTags.Remove(tag);
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }
