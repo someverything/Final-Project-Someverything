@@ -106,7 +106,7 @@ namespace DataAccess.Concrete.EntityFramework
                         .FirstOrDefault() ?? string.Empty,
                     Description = a.ArticleLangs
                         .Where(al => al.LangCode == langCode)
-                        .Select(al => al.Title)
+                        .Select(al => al.Description)
                         .FirstOrDefault() ?? string.Empty,
                     IsActive = a.IsActive,
                     LangCode = langCode,
@@ -129,7 +129,43 @@ namespace DataAccess.Concrete.EntityFramework
 
         public GetArticleDTO GetArticle(Guid Id, string langCode)
         {
-            throw new NotImplementedException();
+            using var context = new AppDbContext();
+            var article = context.Articles
+                .Include(a => a.ArticleLangs)
+                .Include(a => a.ArtSubCats)
+                    .ThenInclude(asc => asc.SubCategory)
+                .Include(a => a.ArticlePhotos)
+                .Include(a => a.ArticleTags)
+                    .ThenInclude(at => at.Tag)
+                .Where(a => a.ArticleLangs.Any(al => al.LangCode == langCode))
+                .Select(a => new GetArticleDTO
+                {
+                    Id = a.Id,
+                    Title = a.ArticleLangs
+                        .Where(al => al.LangCode == langCode)
+                        .Select(al => al.Title)
+                        .FirstOrDefault() ?? string.Empty,
+                    Description = a.ArticleLangs
+                        .Where(al => al.LangCode == langCode)
+                        .Select(al => al.Description)
+                        .FirstOrDefault() ?? string.Empty,
+                    IsActive = a.IsActive,
+                    LangCode = langCode,
+                    Views = a.Views,
+                    CreatedBy = a.CreatedBy,
+                    SubCategoryName = a.ArtSubCats
+                        .Select(asc => asc.SubCategory.Name)
+                        .ToList(),
+                    TagName = a.ArticleTags
+                        .Select(at => at.Tag.Name)
+                        .ToList(),
+                    Photo = a.ArticlePhotos
+                        .Select(ap => ap.FileName)
+                .ToList()
+                }).FirstOrDefault();
+            if(article == null) throw new Exception("Article not found");
+
+            return article;
         }
 
         public Task UpdateArticleAsync(Guid Id, UpdateArticleDTO model)
