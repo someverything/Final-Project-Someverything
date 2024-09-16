@@ -14,7 +14,7 @@ namespace DataAccess.Abstract
         Task CreateArticleAsync(List<AddArticleDTO> model);
         Task UpdateArticleAsync(Guid Id, UpdateArticleDTO model);
         GetArticleDTO GetArticle(Guid Id, string langCode);
-        ICollection<GetArticleDTO> GetAllArticle(Guid Id, string langCode);
+        ICollection<GetArticleDTO> GetAllArticles(string langCode);
         Task DeleteArticle(Guid Id);
     }
 }

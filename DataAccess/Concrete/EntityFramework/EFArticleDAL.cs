@@ -86,10 +86,46 @@ namespace DataAccess.Concrete.EntityFramework
             await context.SaveChangesAsync();
         }
 
-        public ICollection<GetArticleDTO> GetAllArticle(Guid Id, string langCode)
+        public ICollection<GetArticleDTO> GetAllArticles(string langCode)
         {
-            throw new NotImplementedException();
+            using var context = new AppDbContext();
+            var articles = context.Articles
+                .Include(a => a.ArticleLangs)
+                .Include(a => a.ArtSubCats)
+                    .ThenInclude(asc => asc.SubCategory)
+                .Include(a => a.ArticlePhotos)
+                .Include(a => a.ArticleTags)
+                    .ThenInclude(at => at.Tag)
+                .Where(a => a.ArticleLangs.Any(al => al.LangCode == langCode))
+                .Select(a => new GetArticleDTO
+                {
+                    Id = a.Id,
+                    Title = a.ArticleLangs
+                        .Where(al => al.LangCode == langCode)
+                        .Select(al => al.Title)
+                        .FirstOrDefault() ?? string.Empty,
+                    Description = a.ArticleLangs
+                        .Where(al => al.LangCode == langCode)
+                        .Select(al => al.Title)
+                        .FirstOrDefault() ?? string.Empty,
+                    IsActive = a.IsActive,
+                    LangCode = langCode,
+                    Views = a.Views,
+                    CreatedBy = a.CreatedBy,
+                    SubCategoryName = a.ArtSubCats
+                        .Select(asc => asc.SubCategory.Name)
+                        .ToList(),
+                    TagName = a.ArticleTags
+                        .Select(at => at.Tag.Name)
+                        .ToList(),
+                    Photo = a.ArticlePhotos
+                        .Select(ap => ap.FileName)
+                .       ToList()
+                }).ToList();
+            return articles;
         }
+
+
 
         public GetArticleDTO GetArticle(Guid Id, string langCode)
         {

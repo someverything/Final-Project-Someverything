@@ -9,9 +9,10 @@ namespace Entities.DTOs.ArticleDTOs
 {
     public class GetArticleDTO
     {
-
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public bool IsActive { get; set; }
         public string LangCode { get; set; }
         public ICollection<string> SubCategoryName { get; set; }
         public ICollection<string> TagName { get; set; }
