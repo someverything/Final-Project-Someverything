@@ -2,6 +2,7 @@
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.ArticleDTOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,9 +64,26 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
-        public Task DeletrArticle(Guid Id)
+        public async Task DeleteArticle(Guid Id)
         {
-            throw new NotImplementedException();
+            await using var context = new AppDbContext();
+            var article = await context.Articles
+                .Include(a => a.ArticleLangs)
+                .Include(a => a.ArtSubCats)
+                .Include(a => a.ArticlePhotos)
+                .Include(a => a.ArticleTags)
+                .FirstOrDefaultAsync(a => a.Id == Id);
+
+            if (article == null) throw new Exception("Article not found");
+
+            context.ArticleLangs.RemoveRange(article.ArticleLangs);
+            context.ArticlePhotos.RemoveRange(article.ArticlePhotos);
+            context.ArticleTags.RemoveRange(article.ArticleTags);
+            context.ArtSubCats.RemoveRange(article.ArtSubCats);
+
+            context.Articles.Remove(article);
+
+            await context.SaveChangesAsync();
         }
 
         public ICollection<GetArticleDTO> GetAllArticle(Guid Id, string langCode)
