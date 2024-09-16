@@ -14,5 +14,7 @@ namespace Entities.DTOs.ArticleDTOs
         public string Description { get; set; }
         public string CreatedBy { get; set; }
         public ICollection<ArticlePhoto> ArticlePhotos { get; set; }
+        public Guid SubCatId { get; set; }
+        public SubCategory SubCategory { get; set; }
     }
 }
