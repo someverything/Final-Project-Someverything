@@ -3,11 +3,6 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.ArticleDTOs;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -55,7 +50,7 @@ namespace DataAccess.Concrete.EntityFramework
                     }
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
-                }  
+                }
             }
             catch (Exception)
             {
@@ -120,7 +115,7 @@ namespace DataAccess.Concrete.EntityFramework
                         .ToList(),
                     Photo = a.ArticlePhotos
                         .Select(ap => ap.FileName)
-                .       ToList()
+                .ToList()
                 }).ToList();
             return articles;
         }
@@ -163,7 +158,7 @@ namespace DataAccess.Concrete.EntityFramework
                         .Select(ap => ap.FileName)
                 .ToList()
                 }).FirstOrDefault();
-            if(article == null) throw new Exception("Article not found");
+            if (article == null) throw new Exception("Article not found");
 
             return article;
         }
@@ -187,7 +182,7 @@ namespace DataAccess.Concrete.EntityFramework
                 var existingLang = article.ArticleLangs
                     .FirstOrDefault(al => al.LangCode == langDTO.LangCode);
 
-                if(existingLang is not null)
+                if (existingLang is not null)
                 {
                     existingLang.Title = langDTO.Name;
                     existingLang.Description = langDTO.Description;
@@ -208,7 +203,7 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 var existingPhoto = article.ArticlePhotos
                     .FirstOrDefault(ap => ap.FileName == photoDTO.Name);
-                
+
                 if (existingPhoto is not null) existingPhoto.Path = photoDTO.Path;
                 else
                 {
