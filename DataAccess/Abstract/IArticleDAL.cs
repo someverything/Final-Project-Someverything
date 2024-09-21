@@ -16,5 +16,6 @@ namespace DataAccess.Abstract
         GetArticleDTO GetArticle(Guid Id, string langCode);
         ICollection<GetArticleDTO> GetAllArticles(string langCode);
         Task DeleteArticle(Guid Id);
+        List<GetArticleLangDTO> GetArticleLangs(Guid Id);
     }
 }

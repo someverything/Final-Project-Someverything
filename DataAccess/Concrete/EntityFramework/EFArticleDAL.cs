@@ -62,23 +62,34 @@ namespace DataAccess.Concrete.EntityFramework
         public async Task DeleteArticle(Guid Id)
         {
             await using var context = new AppDbContext();
-            var article = await context.Articles
-                .Include(a => a.ArticleLangs)
-                .Include(a => a.ArtSubCats)
-                .Include(a => a.ArticlePhotos)
-                .Include(a => a.ArticleTags)
-                .FirstOrDefaultAsync(a => a.Id == Id);
+            using var transaction = await context.Database.BeginTransactionAsync();
 
-            if (article == null) throw new Exception("Article not found");
+            try
+            {
+                var article = await context.Articles
+                    .Include(a => a.ArticleLangs)
+                    .Include(a => a.ArtSubCats)
+                    .Include(a => a.ArticlePhotos)
+                    .Include(a => a.ArticleTags)
+                    .FirstOrDefaultAsync(a => a.Id == Id);
 
-            context.ArticleLangs.RemoveRange(article.ArticleLangs);
-            context.ArticlePhotos.RemoveRange(article.ArticlePhotos);
-            context.ArticleTags.RemoveRange(article.ArticleTags);
-            context.ArtSubCats.RemoveRange(article.ArtSubCats);
+                if (article == null) throw new Exception("Article not found");
 
-            context.Articles.Remove(article);
+                context.ArticleLangs.RemoveRange(article.ArticleLangs);
+                context.ArticlePhotos.RemoveRange(article.ArticlePhotos);
+                context.ArticleTags.RemoveRange(article.ArticleTags);
+                context.ArtSubCats.RemoveRange(article.ArtSubCats);
 
-            await context.SaveChangesAsync();
+                context.Articles.Remove(article);
+
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+            }
+
         }
 
         public ICollection<GetArticleDTO> GetAllArticles(string langCode)
@@ -161,6 +172,11 @@ namespace DataAccess.Concrete.EntityFramework
             if (article == null) throw new Exception("Article not found");
 
             return article;
+        }
+
+        public List<GetArticleLangDTO> GetArticleLangs(Guid Id)
+        {
+            using var context = new AppDbContext()
         }
 
         public async Task UpdateArticleAsync(Guid Id, UpdateArticleDTO model)

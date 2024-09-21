@@ -28,6 +28,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<AppUser> appUsers { get; set; }
         public DbSet<ArticlePhoto> ArticlePhotos { get; set; }
         public DbSet<ArtSubCat> ArtSubCats { get; set; }
+       
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var datas = ChangeTracker.Entries<BaseEntity>();

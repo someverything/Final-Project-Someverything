@@ -2,7 +2,10 @@ using AutoMapper;
 using Business.Abstract;
 using Core.Abstract;
 using Core.Utilities.Results.Abstract;
+using Core.Utilities.Results.Concrete.ErrorResults;
+using Core.Utilities.Results.Concrete.SuccessResults;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.DTOs.ArticleDTOs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,14 +29,28 @@ namespace Business.Concrete
             _langService = langService;
             _logger = logger;
             _mapper = mapper;
+
         }
 
-        public Task<IResult> CreateAsync(List<AddArticleDTO> models)
+        public async Task<IResult> CreateAsync(List<AddArticleDTO> models)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation("Starting to create Article");
+                
+                await _articleDAL.CreateArticleAsync(models);
+                
+                _logger.LogInformation("Article created successfully");
+                return new SuccessResult(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error ocured while creating article");
+                return new ErrorResult("An error occurred while creating articles.", false,System.Net.HttpStatusCode.BadRequest);
+            }
         }
 
-        public Task DeleteAsync(Guid Id)
+        public Task<IResult> DeleteAsync(Guid Id, string langCode)
         {
             throw new NotImplementedException();
         }
