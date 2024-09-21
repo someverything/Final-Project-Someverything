@@ -176,7 +176,23 @@ namespace DataAccess.Concrete.EntityFramework
 
         public List<GetArticleLangDTO> GetArticleLangs(Guid Id)
         {
-            using var context = new AppDbContext()
+            using var context = new AppDbContext();
+
+            var articleLangs = context.ArticleLangs
+                .Where(al => al.Id == Id)
+                .Select(al => new GetArticleLangDTO
+                {
+                    LangCode = al.LangCode,
+                    Description = al.Description,
+                    Title = al.Title
+                }).ToList();
+
+            if (articleLangs == null || !articleLangs.Any())
+            {
+                throw new KeyNotFoundException($"No languages found for Article with Id {Id}.");
+            }
+
+            return articleLangs;
         }
 
         public async Task UpdateArticleAsync(Guid Id, UpdateArticleDTO model)
