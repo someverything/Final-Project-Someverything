@@ -98,14 +98,62 @@ namespace Business.Concrete
             }
         }
 
-        public GetArticleDTO Get(Guid Id, string langCode)
+        public IDataResult<GetArticleDTO> Get(Guid Id, string langCode)
         {
-            throw new NotImplementedException();
+            var article = _articleDAL.GetArticle(Id, langCode);
+            if (article is null)
+            {
+                _logger.LogError("There is no data exist");
+                return new ErrorDataResults<GetArticleDTO>(null, "Article not found", false, System.Net.HttpStatusCode.NotFound);
+            }
+
+            var articleDTO = new GetArticleDTO
+            {
+                Id = article.Id,
+                LangCode = article.LangCode,
+                ArticleTags = article.ArticleTags,
+                ArtSubCats = article.ArtSubCats,
+                CreatedBy = article.CreatedBy,
+                Description = article.Description,
+                IsActive = article.IsActive,
+                Photo = article.Photo,
+                SubCategoryName = article.SubCategoryName,
+                TagName = article.TagName,
+                Title = article.Title,
+                Views = article.Views
+            };
+
+            return new SuccessDataResult<GetArticleDTO>(articleDTO, "Article retrieved successfully", System.Net.HttpStatusCode.OK);
+
         }
 
-        public ICollection<GetArticleDTO> GetAll(string langCode)
+        public IDataResult<ICollection<GetArticleDTO>> GetAll(string langCode)
         {
-            throw new NotImplementedException();
+            var articles = _articleDAL.GetAllArticles(langCode);
+
+            if (articles == null || !articles.Any())
+            {
+                _logger.LogError("No articles found for the given language code");
+                return new ErrorDataResults<ICollection<GetArticleDTO>>("No articles found", System.Net.HttpStatusCode.NotFound);
+            }
+
+            var articleDTOs = articles.Select(article => new GetArticleDTO
+            {
+                Id=article.Id,
+                LangCode = article.LangCode,
+                ArticleTags = article.ArticleTags,
+                ArtSubCats= article.ArtSubCats,
+                CreatedBy = article.CreatedBy,
+                Description = article.Description,
+                IsActive = article.IsActive,
+                Photo = article.Photo,
+                SubCategoryName = article.SubCategoryName,
+                TagName = article.TagName,
+                Title = article.Title,
+                Views = article.Views
+            }).ToList();
+
+            return new SuccessDataResult<ICollection<GetArticleDTO>>(articleDTOs, "Articles retrieved successfully", System.Net.HttpStatusCode.OK);
         }
 
         public Task<IResult> UpdateAsync(Guid Id, List<AddArticleDTO> models)

@@ -12,8 +12,8 @@ namespace Business.Abstract
     {
         Task<IResult> CreateAsync(List<AddArticleDTO> models);
         Task<IResult> UpdateAsync(Guid Id ,List<AddArticleDTO> models);
-        GetArticleDTO Get(Guid Id, string langCode);
-        ICollection<GetArticleDTO> GetAll(string langCode);
+        IDataResult<GetArticleDTO> Get(Guid Id, string langCode);
+        IDataResult<ICollection<GetArticleDTO>> GetAll(string langCode);
         Task<IResult> DeleteAsync(Guid Id, string langCode);
     }
 }
